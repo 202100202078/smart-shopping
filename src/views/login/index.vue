@@ -17,7 +17,7 @@
         </div>
         <div class="form-item">
           <input class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
-          <img src="@/assets/code.png" alt="">
+          <img v-if="picCode" :src="picCode" alt="" @click="getPicCode">
         </div>
         <div class="form-item">
           <input class="inp" placeholder="请输入短信验证码" type="text">
@@ -34,9 +34,22 @@
 import request from '@/utils/request'
 export default {
   name: 'LoginIndex',
-  async created () {
-    const res = await request.get('/captcha/image')
-    console.log(res)
+  data () {
+    return {
+      picCode: '',
+      picKey: '',
+      pciUrl: ''
+    }
+  },
+  created () {
+    this.getPicCode()
+  },
+  methods: {
+    async getPicCode () {
+      const { data: { base64, key } } = await request.get('/captcha/image')
+      this.picCode = base64
+      this.picKey = key
+    }
   }
 }
 </script>
