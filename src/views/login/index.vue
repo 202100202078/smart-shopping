@@ -16,8 +16,8 @@
           <input class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
         </div>
         <div class="form-item">
-          <input class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
-          <img v-if="picCode" :src="picCode" alt="" @click="getPicCode">
+          <input v-model="picCode" class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
+          <img v-if="picUrl" :src="pciUrl" alt="" @click="getPicCode">
         </div>
         <div class="form-item">
           <input class="inp" placeholder="请输入短信验证码" type="text">
@@ -47,7 +47,7 @@ export default {
   methods: {
     async getPicCode () {
       const { data: { base64, key } } = await request.get('/captcha/image')
-      this.picCode = base64
+      this.picUrl = base64
       this.picKey = key
     }
   }
