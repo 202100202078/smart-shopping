@@ -9,6 +9,13 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
+  // 开启loading，禁止背景点击(节流，可以防止多次无效点击)
+  Toast.loading({
+    message: '加载中...',
+    forbidClick: true,
+    loadingType: 'spinner',
+    duration: 0
+  })
   return config
 }, function (error) {
   // 对请求错误做些什么
@@ -23,6 +30,8 @@ instance.interceptors.response.use(function (response) {
     // 请求错误
     Toast(data.message)
     return Promise.reject(data.message)
+  } else {
+    Toast.clear()
   }
   // 扒掉一层数据
   return response.data
