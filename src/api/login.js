@@ -5,3 +5,14 @@ import request from '@/utils/request'
 export const getPicCode = () => {
   return request.get('/captcha/image')
 }
+
+// 短信验证码请求
+export const getMsgCode = (captchaCode, captchaKey, mobile) => {
+  return request.post('/captcha/sendSmsCaptcha', {
+    form: {
+      captchaCode,
+      captchaKey,
+      mobile
+    }
+  })
+}

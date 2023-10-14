@@ -13,7 +13,7 @@
 
       <div class="form">
         <div class="form-item">
-          <input class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
+          <input v-model="mobile" class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
         </div>
         <div class="form-item">
           <input v-model="picCode" class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
@@ -21,7 +21,7 @@
         </div>
         <div class="form-item">
           <input class="inp" placeholder="请输入短信验证码" type="text">
-          <button>获取验证码</button>
+          <button @click="getCode">{{totalSecond===curSecond?'获取验证码':`${curSecond}秒后重新发送`}}</button>
         </div>
       </div>
 
@@ -31,25 +31,62 @@
 </template>
 
 <script>
-import { getPicCode } from '@/api/login'
+import { getPicCode, getMsgCode } from '@/api/login'
 export default {
   name: 'LoginIndex',
   data () {
     return {
-      picCode: '',
-      picKey: '',
-      picUrl: ''
+      mobile: '', // 用户输入的手机号
+      picCode: '', // 用户输入的验证码
+      picKey: '', // 图形验证码校验
+      picUrl: '', // 图形验证码
+      totalSecond: 60,
+      curSecond: 60,
+      timer: null
     }
-  },
-  created () {
-    this.getPicCode()
   },
   methods: {
     async getPicCode () {
       const { data: { base64, key } } = await getPicCode()
       this.picUrl = base64
       this.picKey = key
+    },
+    async getCode () {
+      // 校验手机号与图形验证码格式
+      if (!this.checkFn()) {
+        return
+      }
+      // 只有当前不存在定时器并且计时归位了
+      if (!this.timer && this.curSecond === this.totalSecond) {
+        await getMsgCode(this.picCode, this.picKey, this.mobile)
+        this.$toast('短信验证码发送成功')
+        this.timer = setInterval(() => {
+          this.curSecond--
+          if (this.curSecond <= 0) {
+            clearInterval(this.timer)// 清除定时器
+            this.timer = null
+            this.curSecond = this.totalSecond// 归位
+          }
+        }, 1000)
+      }
+    },
+    checkFn () {
+      if (!/^1[3-9]\d{9}$/.test(this.mobile)) {
+        this.$toast('请输入正确的手机号')
+        return false
+      }
+      if (!/^\w{4}$/.test(this.picCode)) {
+        this.$toast('请输入正确的验证码')
+        return false
+      }
+      return true
     }
+  },
+  created () {
+    this.getPicCode()
+  },
+  destroyed () {
+    clearInterval(this.timer)
   }
 }
 </script>
