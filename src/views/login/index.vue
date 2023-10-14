@@ -17,7 +17,7 @@
         </div>
         <div class="form-item">
           <input v-model="picCode" class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
-          <img v-if="picUrl" :src="pciUrl" alt="" @click="getPicCode">
+          <img v-if="picUrl" :src="picUrl" alt="" @click="getPicCode">
         </div>
         <div class="form-item">
           <input class="inp" placeholder="请输入短信验证码" type="text">
@@ -31,14 +31,14 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+import { getPicCode } from '@/api/login'
 export default {
   name: 'LoginIndex',
   data () {
     return {
       picCode: '',
       picKey: '',
-      pciUrl: ''
+      picUrl: ''
     }
   },
   created () {
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     async getPicCode () {
-      const { data: { base64, key } } = await request.get('/captcha/image')
+      const { data: { base64, key } } = await getPicCode()
       this.picUrl = base64
       this.picKey = key
     }
