@@ -20,22 +20,23 @@
           <img v-if="picUrl" :src="picUrl" alt="" @click="getPicCode">
         </div>
         <div class="form-item">
-          <input class="inp" placeholder="请输入短信验证码" type="text">
+          <input v-model="msgCode" class="inp" placeholder="请输入短信验证码" type="text">
           <button @click="getCode">{{totalSecond===curSecond?'获取验证码':`${curSecond}秒后重新发送`}}</button>
         </div>
       </div>
 
-      <div class="login-btn">登录</div>
+      <div class="login-btn" @click="loginFn">登录</div>
     </div>
   </div>
 </template>
 
 <script>
-import { getPicCode, getMsgCode } from '@/api/login'
+import { getPicCode, getMsgCode, codeLogin } from '@/api/login'
 export default {
   name: 'LoginIndex',
   data () {
     return {
+      msgCode: '', // 用户输入的短信验证码
       mobile: '', // 用户输入的手机号
       picCode: '', // 用户输入的验证码
       picKey: '', // 图形验证码校验
@@ -80,6 +81,20 @@ export default {
         return false
       }
       return true
+    },
+    async loginFn () {
+      // 验证手机号与图形验证码
+      if (!this.checkFn()) {
+        return
+      }
+      // 验证短信验证码格式
+      if (!/^\d{6}$/.test(this.msgCode)) {
+        this.$toast('请输入正确的短信验证码')
+        return
+      }
+      await codeLogin(this.mobile, this.msgCode)
+      this.$toast('登录成功')
+      this.$router.push('/')
     }
   },
   created () {
