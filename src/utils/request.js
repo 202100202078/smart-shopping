@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Toast } from 'vant'
 // 新建axios实例
 const instance = axios.create({
   baseURL: 'http://cba.itlike.com/public/index.php?s=/api/',
@@ -17,6 +18,12 @@ instance.interceptors.request.use(function (config) {
 // 添加响应拦截器
 instance.interceptors.response.use(function (response) {
   // 2xx 范围内的状态码都会触发该函数。
+  const data = response.data
+  if (data.status !== 200) {
+    // 请求错误
+    Toast(data.message)
+    return Promise.reject(data.message)
+  }
   // 扒掉一层数据
   return response.data
 }, function (error) {
