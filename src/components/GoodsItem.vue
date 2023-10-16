@@ -21,8 +21,10 @@ export default {
   name: 'GoodsItem',
   props: {
     item: {
-      required: true,
-      type: Object
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   }
 }
