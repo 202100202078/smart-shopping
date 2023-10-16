@@ -60,6 +60,7 @@ export default {
     },
     async getProductListData (type) {
       const { data: { list } } = await getProductList({
+        categoryId: this.$route.query.categoryId,
         sortType: type,
         goodsName: this.searchKey,
         page: this.page
