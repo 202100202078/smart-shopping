@@ -22,11 +22,12 @@
 </template>
 
 <script>
+import { getHistory, setHistory } from '@/utils/storage'
 export default {
   name: 'SearchIndex',
   data () {
     return {
-      history: ['手机', '白酒', '零食'],
+      history: getHistory(),
       searchInput: ''
     }
   },
@@ -39,9 +40,12 @@ export default {
       }
       // 移动到最前面
       this.history.unshift(key)
+      setHistory(this.history)
+      this.$router.push(`/searchlist?key=${key}`)
     },
     clearHistory () {
       this.history = []
+      setHistory([])
     }
   }
 }

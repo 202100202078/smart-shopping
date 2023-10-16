@@ -11,6 +11,7 @@ import Category from '@/views/layout/category'
 import Cart from '@/views/layout/cart'
 import User from '@/views/layout/user'
 import store from '@/store'
+import SearchList from '@/views/search/list'
 
 const authUrl = ['/pay', '/myorder']
 
@@ -33,7 +34,8 @@ const router = new VueRouter({
     { path: '/myorder', component: MyOrder },
     { path: '/pay', component: Pay },
     { path: '/productdetail', component: ProductDetail },
-    { path: '/search', component: Search }
+    { path: '/search', component: Search },
+    { path: '/searchlist', component: SearchList }
   ]
 })
 
