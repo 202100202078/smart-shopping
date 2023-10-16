@@ -8,9 +8,6 @@
 export default {
   data () {
     return {
-      checked: true,
-      value: 4,
-      currentRate: 10
     }
   }
 }

@@ -10,6 +10,9 @@ import Home from '@/views/layout/home'
 import Category from '@/views/layout/category'
 import Cart from '@/views/layout/cart'
 import User from '@/views/layout/user'
+import store from '@/store'
+
+const authUrl = ['/pay', '/myorder']
 
 Vue.use(VueRouter)
 
@@ -32,6 +35,23 @@ const router = new VueRouter({
     { path: '/productdetail', component: ProductDetail },
     { path: '/search', component: Search }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  // 非权限页面
+  if (!authUrl.includes(to.path)) {
+    next()
+    return
+    // 直接放行
+  }
+  // 权限页面
+  // 检查token
+  const token = store.getters.token
+  if (token) {
+    next()
+  } else {
+    next('/login')
+  }
 })
 
 export default router
