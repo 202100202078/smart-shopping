@@ -73,9 +73,38 @@
         <van-icon name="shopping-cart-o" />
         <span>购物车</span>
       </div>
-      <div class="btn-add">加入购物车</div>
-      <div class="btn-buy">立刻购买</div>
+      <div class="btn-add" @click="addCart">加入购物车</div>
+      <div class="btn-buy" @click="addBuy">立刻购买</div>
     </div>
+
+    <van-action-sheet v-model="showSheet" :title="mode === 'cart' ? '加入购物车' : '立刻购买'">
+      <div class="product">
+        <div class="product-title">
+          <div class="left">
+            <img :src="detail.goods_image" alt="">
+          </div>
+          <div class="right">
+            <div class="price">
+              <span>¥</span>
+              <span class="nowprice">{{detail.goods_price_min}}</span>
+            </div>
+            <div class="count">
+              <span>库存</span>
+              <span>{{detail.stock_total}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="num-box">
+          <span>数量</span>
+          数字框占位
+        </div>
+        <div class="showbtn" v-if="detail.stock_total>0">
+          <div class="btn" v-if="mode==='cart'">加入购物车</div>
+          <div class="btn now" v-else>立刻购买</div>
+        </div>
+        <div class="btn-none" v-else>该商品已抢完</div>
+      </div>
+    </van-action-sheet>
   </div>
 </template>
 
@@ -91,7 +120,9 @@ export default {
       images: [],
       current: 0,
       total: 0,
-      defaultAvatar
+      defaultAvatar,
+      showSheet: false,
+      mode: 'cart'
     }
   },
   methods: {
@@ -102,15 +133,24 @@ export default {
       const { data: { detail } } = await getProductDetail(this.goodsId)
       this.images = detail.goods_images
       this.detail = detail
+      console.log(detail)
     },
     async getComment () {
       const { data: { list, total } } = await getProductComment({
         goodsId: this.goodsId,
         commentNum: 3
       })
-      console.log(list)
+      // console.log(list)
       this.commentList = list
       this.total = total
+    },
+    addCart () {
+      this.mode = 'cart'
+      this.showSheet = true
+    },
+    addBuy () {
+      this.mode = 'buy'
+      this.showSheet = true
     }
   },
   computed: {
@@ -270,5 +310,54 @@ export default {
 
 .tips {
   padding: 10px;
+}
+
+//弹框样式
+.product {
+  .product-title {
+    display: flex;
+    .left {
+      img {
+        width: 90px;
+        height: 90px;
+      }
+      margin: 10px;
+    }
+    .right {
+      flex: 1;
+      padding: 10px;
+      .price {
+        font-size: 14px;
+        color: #fe560a;
+        .nowprice {
+          font-size: 24px;
+          margin: 0 5px;
+        }
+      }
+    }
+  }
+
+  .num-box {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+  }
+
+  .btn, .btn-none {
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    border-radius: 20px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    background-color: rgb(255, 148, 2);
+  }
+  .btn.now {
+    background-color: #fe5630;
+  }
+  .btn-none {
+    background-color: #cccccc;
+  }
 }
 </style>
