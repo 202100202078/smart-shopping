@@ -1,3 +1,4 @@
+import store from '@/store'
 import axios from 'axios'
 import { Toast } from 'vant'
 // 新建axios实例
@@ -16,6 +17,12 @@ instance.interceptors.request.use(function (config) {
     loadingType: 'spinner',
     duration: 0
   })
+  // 如果用户已登录添加用户token到请求头header
+  const token = store.getters.token
+  if (token) {
+    config.headers['Access-Token'] = token
+    config.headers.platform = 'H5'
+  }
   return config
 }, function (error) {
   // 对请求错误做些什么

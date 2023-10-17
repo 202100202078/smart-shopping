@@ -69,11 +69,12 @@
         <van-icon name="wap-home-o" />
         <span>首页</span>
       </div>
-      <div class="icon-cart">
-        <van-icon name="shopping-cart-o" />
-        <span>购物车</span>
-      </div>
-      <div class="btn-add" @click="addCart">加入购物车</div>
+    <div class="icon-cart">
+      <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
+      <van-icon name="shopping-cart-o" />
+      <span>购物车</span>
+    </div>
+      <div class="btn-add" @click="addFn">加入购物车</div>
       <div class="btn-buy" @click="addBuy">立刻购买</div>
     </div>
 
@@ -99,7 +100,7 @@
           <CountBox v-model="addCount"></CountBox>
         </div>
         <div class="showbtn" v-if="detail.stock_total>0">
-          <div class="btn" v-if="mode==='cart'">加入购物车</div>
+          <div class="btn" v-if="mode==='cart'" @click="addCart">加入购物车</div>
           <div class="btn now" v-else>立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
@@ -109,6 +110,7 @@
 </template>
 
 <script>
+import { addCartRequestFn, getCartNum } from '@/api/cart'
 import CountBox from '@/components/CountBox.vue'
 import { getProductDetail, getProductComment } from '@/api/productdetail'
 import defaultAvatar from '@/assets/default-avatar.png'
@@ -119,15 +121,16 @@ export default {
   },
   data () {
     return {
-      detail: {},
-      commentList: [],
-      images: [],
-      current: 0,
-      total: 0,
-      defaultAvatar,
-      showSheet: false,
-      mode: 'cart',
-      addCount: 1
+      detail: {}, // 商品详细信息
+      commentList: [], // 评价信息
+      images: [], // 商品介绍图
+      current: 0, // 轮播图当前页数
+      total: 0, // 商品评价总数
+      defaultAvatar, // 默认用户头像
+      showSheet: false, // 是否显示弹框
+      mode: 'cart', // 当前弹框模式
+      addCount: 1, // 用户选择加入购物车商品数
+      cartTotal: 0// 购物车商品数
     }
   },
   methods: {
@@ -138,7 +141,7 @@ export default {
       const { data: { detail } } = await getProductDetail(this.goodsId)
       this.images = detail.goods_images
       this.detail = detail
-      console.log(detail)
+      // console.log(detail)
     },
     async getComment () {
       const { data: { list, total } } = await getProductComment({
@@ -149,13 +152,44 @@ export default {
       this.commentList = list
       this.total = total
     },
-    addCart () {
+    addFn () {
       this.mode = 'cart'
       this.showSheet = true
     },
     addBuy () {
       this.mode = 'buy'
       this.showSheet = true
+    },
+    async addCart () {
+      // 判断是否有token
+      // 如果没有，则显示弹框
+      if (!this.$store.getters.token) {
+        this.$dialog.confirm({
+          title: '温馨提示',
+          message: '需要登录才能继续操作',
+          confirmButtonText: '去登录',
+          cancelButtonText: '再逛逛'
+        }).then(() => {
+          // 跳转到登录页
+          // 同时携带当前页面url作为参数传递，方便回到当前页面
+          this.$router.replace({
+            path: '/login',
+            query: {
+              backUrl: this.$route.fullPath
+            }
+          })
+        }).catch(() => {
+          // 不操作
+        })
+        return
+      }
+      // 有则发请求加入购物车
+      console.log('发送请求')
+      const { data } = await addCartRequestFn(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
+      // console.log(data)
+      this.cartTotal = data.cartTotal
+      this.$toast('加入购物车成功')
+      this.showSheet = false// 关闭弹框
     }
   },
   computed: {
@@ -163,9 +197,11 @@ export default {
       return this.$route.params.goodsId
     }
   },
-  created () {
+  async created () {
     this.getDetail()
     this.getComment()
+    const { data } = await getCartNum()
+    this.cartTotal = data.cartTotal
   }
 }
 </script>
@@ -363,6 +399,24 @@ export default {
   }
   .btn-none {
     background-color: #cccccc;
+  }
+}
+
+//购物车数量样式
+.footer .icon-cart {
+  position: relative;
+  padding: 0 6px;
+  .num {
+    z-index: 999;
+    position: absolute;
+    top: -2px;
+    right: 0;
+    min-width: 16px;
+    padding: 0 4px;
+    color: #fff;
+    text-align: center;
+    background-color: #ee0a24;
+    border-radius: 50%;
   }
 }
 </style>

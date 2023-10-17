@@ -96,7 +96,8 @@ export default {
       // 存储用户信息
       this.$store.commit('user/setUserInfo', res.data)
       this.$toast('登录成功')
-      this.$router.push('/')
+      const url = this.$route.query.backUrl || '/'
+      this.$router.replace(url)
     }
   },
   created () {

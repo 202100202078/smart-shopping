@@ -13,7 +13,7 @@ export const getProductComment = (obj) => {
   return request.get('/comment/listRows', {
     params: {
       goodsId,
-      commentNum
+      limit: commentNum
     }
   })
 }
