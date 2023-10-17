@@ -27,7 +27,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## 路由设计配置
 
-![69718810935](D:\MyProject\HTMLCSSJavaScript\Vue\code\smart_shopping\assets\1697188109354.png)
+![输入图片说明](src/assets/image.png)
 
 
 
