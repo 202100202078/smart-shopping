@@ -65,11 +65,11 @@
 
     <!-- 底部 -->
     <div class="footer">
-      <div class="icon-home">
+      <div class="icon-home" @click="$router.push('/')">
         <van-icon name="wap-home-o" />
         <span>首页</span>
       </div>
-    <div class="icon-cart">
+    <div class="icon-cart" @click="$router.push('/cart')">
       <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
       <van-icon name="shopping-cart-o" />
       <span>购物车</span>
@@ -184,7 +184,6 @@ export default {
         return
       }
       // 有则发请求加入购物车
-      console.log('发送请求')
       const { data } = await addCartRequestFn(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
       // console.log(data)
       this.cartTotal = data.cartTotal
