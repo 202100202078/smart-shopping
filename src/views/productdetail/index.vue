@@ -101,7 +101,7 @@
         </div>
         <div class="showbtn" v-if="detail.stock_total>0">
           <div class="btn" v-if="mode==='cart'" @click="addCart">加入购物车</div>
-          <div class="btn now" v-else>立刻购买</div>
+          <div class="btn now" v-else @click="goBuyNow">立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
       </div>
@@ -114,8 +114,10 @@ import { addCartRequestFn, getCartNum } from '@/api/cart'
 import CountBox from '@/components/CountBox.vue'
 import { getProductDetail, getProductComment } from '@/api/productdetail'
 import defaultAvatar from '@/assets/default-avatar.png'
+import loginConfirm from '@/mixins/loginConfirm'
 export default {
   name: 'ProDetail',
+  mixins: [loginConfirm],
   components: {
     CountBox
   },
@@ -161,26 +163,7 @@ export default {
       this.showSheet = true
     },
     async addCart () {
-      // 判断是否有token
-      // 如果没有，则显示弹框
-      if (!this.$store.getters.token) {
-        this.$dialog.confirm({
-          title: '温馨提示',
-          message: '需要登录才能继续操作',
-          confirmButtonText: '去登录',
-          cancelButtonText: '再逛逛'
-        }).then(() => {
-          // 跳转到登录页
-          // 同时携带当前页面url作为参数传递，方便回到当前页面
-          this.$router.replace({
-            path: '/login',
-            query: {
-              backUrl: this.$route.fullPath
-            }
-          })
-        }).catch(() => {
-          // 不操作
-        })
+      if (this.checkToken()) {
         return
       }
       // 有则发请求加入购物车
@@ -189,7 +172,23 @@ export default {
       this.cartTotal = data.cartTotal
       this.$toast('加入购物车成功')
       this.showSheet = false// 关闭弹框
+    },
+    goBuyNow () {
+      if (this.checkToken()) {
+        return
+      }
+      // 跳转到结算页面同时query传参
+      this.$router.push({
+        path: '/pay',
+        query: {
+          mode: 'buyNow',
+          goodsId: this.goodsId,
+          goodsNum: this.addCount,
+          goodsSkuId: this.detail.skuList[0].goods_sku_id
+        }
+      })
     }
+
   },
   computed: {
     goodsId () {
