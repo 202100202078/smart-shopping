@@ -1,6 +1,7 @@
 // 用户个人信息
 const INFO_KEY = 'my_shopping_info'
 const HISTORY_KEY = 'my_history_info'
+const ADDRESS_KEY = 'my_address_info'
 
 export const getUserInfo = () => {
   const defaultInfo = { token: '', userId: '' }
@@ -25,4 +26,15 @@ export const getHistory = () => {
 
 export const setHistory = (history) => {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+}
+
+// 用户地址列表
+export const getAddress = () => {
+  const defaultAddress = []
+  const result = localStorage.getItem(ADDRESS_KEY)
+  return result ? JSON.parse(result) : defaultAddress
+}
+
+export const setAddress = (address) => {
+  localStorage.setItem(ADDRESS_KEY, JSON.stringify(address))
 }

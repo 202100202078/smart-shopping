@@ -116,7 +116,6 @@ export default {
     }
   },
   created () {
-    // 这里可以不用判断用户token是否存在，因为请求拦截器中已经判断
     if (this.isLogin) {
       this.$store.dispatch('cart/getCartAction')
     }

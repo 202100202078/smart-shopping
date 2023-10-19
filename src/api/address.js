@@ -4,3 +4,10 @@ import request from '@/utils/request'
 export const getAddressList = () => {
   return request.get('/address/list')
 }
+
+// 删除收获地址
+export const delAddress = (addressId) => {
+  return request.post('/address/remove', {
+    addressId
+  })
+}

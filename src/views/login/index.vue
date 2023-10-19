@@ -60,7 +60,7 @@ export default {
       // 只有当前不存在定时器并且计时归位了
       if (!this.timer && this.curSecond === this.totalSecond) {
         await getMsgCode(this.picCode, this.picKey, this.mobile)
-        this.$toast('短信验证码发送成功')
+        this.$toast('短信验证码发送成功(测试环境下验证码默认为246810)')
         this.timer = setInterval(() => {
           this.curSecond--
           if (this.curSecond <= 0) {

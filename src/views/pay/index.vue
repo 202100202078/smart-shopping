@@ -3,7 +3,7 @@
     <van-nav-bar fixed title="订单结算台" left-arrow @click-left="$router.go(-1)" />
 
     <!-- 地址相关 -->
-    <div class="address">
+    <div class="address" @click="$router.push(`/address`)">
 
       <div class="left-icon">
         <van-icon name="logistics" />
@@ -150,8 +150,10 @@ export default {
       this.$router.replace('/myorder')
     },
     async getAddressList () {
-      const { data: list } = await getAddressList()
+      const { data: { list } } = await getAddressList()
       this.addressList = list
+      // 将数据存储至vuex中
+      this.$store.commit('address/setAddressList', list)
     },
     async getOrderList () {
       if (this.mode === 'cart') {

@@ -14,7 +14,12 @@ export default {
     }
   },
   actions: {
-
+    logout (context) {
+      // 将user模块信息重置
+      context.commit('setUserInfo', {})
+      // 将cart模块信息重置
+      context.commit('cart/setCartList', [], { root: true })
+    }
   },
   getters: {
 

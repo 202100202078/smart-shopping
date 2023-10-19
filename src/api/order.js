@@ -28,3 +28,13 @@ export const submitOrder = (mode, obj) => {
     ...obj
   })
 }
+
+// 获取订单列表
+export const getOrderList = (dataType, page) => {
+  return request.get('/order/list', {
+    params: {
+      dataType,
+      page
+    }
+  })
+}
