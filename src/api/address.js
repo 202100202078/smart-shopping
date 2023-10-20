@@ -38,3 +38,8 @@ export const setDefaultAddress = (addressId) => {
 export const getDefaultAddressId = () => {
   return request.get('/address/defaultId')
 }
+
+// 获取省市区
+export const getAreaData = () => {
+  return request.get('/region/tree')
+}

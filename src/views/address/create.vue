@@ -36,7 +36,7 @@
       />
       <van-popup v-model="showArea" position="bottom">
         <van-area
-          :area-list="areaList"
+          :area-list="areaData"
           @confirm="onConfirm"
           @cancel="showArea = false"
         />
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { areaList } from '@vant/area-data'
+// import { mapState } from 'vuex'
 export default {
   name: 'createAddressIndex',
   data () {
@@ -65,13 +65,12 @@ export default {
       username: this.$route.query.name || '',
       phone: this.$route.query.phone || '',
       addressDetail: this.$route.query.detail || '',
-      // addressValue: '',
-      showArea: false,
-      areaList
-      // areaCodeList: []
+      addressValue: '',
+      showArea: false
     }
   },
   computed: {
+    // ...mapState('address', ['areaData']),
     region () {
       return [
         {
@@ -99,7 +98,6 @@ export default {
   },
   methods: {
     onSubmit (values) {
-      // 接口地区码规则未说明，这里无法实现地区确认
       this.$store.dispatch('address/addAddressAction', this.formObj)
       this.$router.replace('/address')
     },
@@ -113,6 +111,7 @@ export default {
     }
     // onConfirm (values) {
     //   // 存储地区码
+    //   console.log(values)
     //   this.areaCodeList = values.map(item => item.code)
     //   this.addressValue = values
     //     .filter((item) => !!item)
@@ -121,6 +120,10 @@ export default {
     //   this.showArea = false
     // }
   }
+  // created () {
+  //   // 获取省市区数据到vuex
+  //   this.$store.dispatch('address/getAreaDataAction')
+  // }
 }
 </script>
 

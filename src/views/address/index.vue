@@ -78,7 +78,10 @@ export default {
     },
     setDefaultAddress (id) {
       this.$store.dispatch('address/setDefaultAddressAction', id)
-      this.$router.go(-1)
+      if (this.$route.query.from) {
+        // 如果从支付页来的
+        this.$router.go(-1)
+      }
     },
     async getDefaultAddressId () {
       await getDefaultAddressId()

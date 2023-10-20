@@ -1,11 +1,12 @@
 import { getAddress, setAddress, setDefaultAddressId, getDefaultAddressId } from '@/utils/storage'
-import { delAddress, getAddressList, addAddress, editAddress, setDefaultAddress } from '@/api/address'
+import { delAddress, getAddressList, addAddress, editAddress, setDefaultAddress, getAreaData } from '@/api/address'
 export default {
   namespaced: true,
   state () {
     return {
       addressList: getAddress() || [],
-      defaultAddressId: getDefaultAddressId() || ''
+      defaultAddressId: getDefaultAddressId() || '',
+      areaData: {}
     }
   },
   mutations: {
@@ -34,6 +35,9 @@ export default {
       if (cur !== 0) {
         state.addressList.unshift(state.addressList.splice(cur, 1)[0])
       }
+    },
+    setAreaData (state, list) {
+      state.areaData = list
     }
   },
   actions: {
@@ -64,6 +68,10 @@ export default {
       context.commit('setDefaultAddressId', id)
       // 如果当前id不是地址栏第一个id则置顶
       context.commit('toFirst', id)
+    },
+    async getAreaDataAction (context) {
+      const { data: { list } } = await getAreaData()
+      context.commit('setAreaData', list)
     }
 
   },
