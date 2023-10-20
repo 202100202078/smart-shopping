@@ -17,9 +17,7 @@
 
     <!-- 排序选项按钮 -->
     <div class="sort-btns" @click="changeType">
-      <div class="sort-item">综合</div>
-      <div class="sort-item">销量</div>
-      <div class="sort-item">价格 </div>
+      <div :class="{active:activeIndex===index}" @click="selectFn(index)" class="sort-item" v-for="(item,index) in sortArr" :key="index">{{item}}</div>
     </div>
 
     <div class="goods-list">
@@ -38,6 +36,8 @@ export default {
   },
   data () {
     return {
+      sortArr: ['综合', '销量', '价格'],
+      activeIndex: 0,
       page: 1,
       productList: []
     }
@@ -48,6 +48,9 @@ export default {
     }
   },
   methods: {
+    selectFn (index) {
+      this.activeIndex = index
+    },
     changeType (e) {
       const type = e.target.innerText
       if (type === '综合') {
@@ -94,6 +97,9 @@ export default {
       text-align: center;
       flex: 1;
       font-size: 16px;
+    }
+    .active {
+      color: red;
     }
   }
 }
