@@ -1,19 +1,22 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '@/views/login/index'
-import LayOut from '@/views/layout/index'
-import MyOrder from '@/views/myorder/index'
-import Pay from '@/views/pay/index'
-import ProductDetail from '@/views/productdetail/index'
-import Search from '@/views/search/index'
-import Home from '@/views/layout/home'
-import Category from '@/views/layout/category'
+import store from '@/store'
+
+// 首页5个页面无需懒加载
 import Cart from '@/views/layout/cart'
 import User from '@/views/layout/user'
-import store from '@/store'
-import SearchList from '@/views/search/list'
-import Address from '@/views/address/index'
-import CreateAddress from '@/views/address/create.vue'
+import Category from '@/views/layout/category'
+import Home from '@/views/layout/home'
+import LayOut from '@/views/layout/index'
+
+const Login = () => import('@/views/login/index')
+const MyOrder = () => import('@/views/myorder/index')
+const Pay = () => import('@/views/pay/index')
+const ProductDetail = () => import('@/views/productdetail/index')
+const Search = () => import('@/views/search/index')
+const SearchList = () => import('@/views/search/list')
+const Address = () => import('@/views/address/index')
+const CreateAddress = () => import('@/views/address/create.vue')
 
 const authUrl = ['/pay', '/myorder']
 

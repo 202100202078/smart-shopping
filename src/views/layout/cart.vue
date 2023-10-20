@@ -59,13 +59,20 @@ import { mapState, mapGetters } from 'vuex'
 import CountBox from '@/components/CountBox.vue'
 export default {
   name: 'CartPage',
+  components: {
+    CountBox
+  },
   data () {
     return {
       isEdit: false
     }
   },
-  components: {
-    CountBox
+  computed: {
+    ...mapState('cart', ['cartList']),
+    ...mapGetters('cart', ['selGoods', 'cartTotal', 'selCount', 'selPrice', 'isCheckedAll']),
+    isLogin () {
+      return this.$store.getters.token
+    }
   },
   methods: {
     toggleCheck (id) {
@@ -95,13 +102,6 @@ export default {
           cartIds: this.selGoods.map(item => item.id).join(',')
         }
       })
-    }
-  },
-  computed: {
-    ...mapState('cart', ['cartList']),
-    ...mapGetters('cart', ['selGoods', 'cartTotal', 'selCount', 'selPrice', 'isCheckedAll']),
-    isLogin () {
-      return this.$store.getters.token
     }
   },
   watch: {
