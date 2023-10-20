@@ -25,7 +25,7 @@
         placeholder="请输入收货人电话号码"
         :rules="[{ required: true, message: '请输入电话号码' }]"
       />
-      <van-field
+      <!-- <van-field
         readonly
         clickable
         name="area"
@@ -40,7 +40,7 @@
           @confirm="onConfirm"
           @cancel="showArea = false"
         />
-      </van-popup>
+      </van-popup> -->
       <van-field
         v-model="addressDetail"
         name="详细地址"
@@ -49,9 +49,10 @@
         :rules="[{ required: true, message: '请输入详细地址' }]"
       />
       <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit" color="red">提交</van-button>
+        <van-button v-if="!$route.query.mode" round block type="info" native-type="submit" color="red">提交</van-button>
       </div>
     </van-form>
+      <van-button v-if="$route.query.mode" round block type="info" color="red" @click="editAddress">修改</van-button>
   </div>
 </template>
 
@@ -61,25 +62,64 @@ export default {
   name: 'createAddressIndex',
   data () {
     return {
-      username: '',
-      phone: '',
-      addressDetail: '',
-      addressValue: '',
+      username: this.$route.query.name || '',
+      phone: this.$route.query.phone || '',
+      addressDetail: this.$route.query.detail || '',
+      // addressValue: '',
       showArea: false,
       areaList
+      // areaCodeList: []
+    }
+  },
+  computed: {
+    region () {
+      return [
+        {
+          label: '上海',
+          value: 782
+        },
+        {
+          label: '上海市',
+          value: 783
+        },
+        {
+          label: '徐汇区',
+          value: 785
+        }
+      ]
+    },
+    formObj () {
+      return {
+        name: this.username,
+        phone: this.phone,
+        detail: this.addressDetail,
+        region: this.region
+      }
     }
   },
   methods: {
     onSubmit (values) {
-      console.log('submit', values)
+      // 接口地区码规则未说明，这里无法实现地区确认
+      this.$store.dispatch('address/addAddressAction', this.formObj)
+      this.$router.replace('/address')
     },
-    onConfirm (values) {
-      this.addressValue = values
-        .filter((item) => !!item)
-        .map((item) => item.name)
-        .join('/')
-      this.showArea = false
+    editAddress () {
+      // console.log('vuex发送修改请求')
+      const obj = {}
+      obj.addressId = this.$route.query.address_id
+      obj.formObj = this.formObj
+      this.$store.dispatch('address/editAddressAction', obj)
+      this.$router.replace('/address')
     }
+    // onConfirm (values) {
+    //   // 存储地区码
+    //   this.areaCodeList = values.map(item => item.code)
+    //   this.addressValue = values
+    //     .filter((item) => !!item)
+    //     .map((item) => item.name)
+    //     .join('/')
+    //   this.showArea = false
+    // }
   }
 }
 </script>

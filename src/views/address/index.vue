@@ -6,26 +6,23 @@
       @click-left="$router.go(-1)"
     />
     <div class="addressList" v-if="this.addressList.length > 0">
-      <div class="addressItem" v-for="(address,index) in addressList" :key="address.address_id">
+      <div class="addressItem" v-for="(address) in addressList" :key="address.address_id">
         <div class="userInfo">
           <span class="userId">{{address.name}}</span>
           <span class="userPhone">{{address.phone}}</span>
         </div>
         <div class="userAddress">
-          {{address.region.province+
-          address.region.city+
-          address.region.region+
-          address.detail}}
+          {{address.detail}}
         </div>
         <hr>
         <div class="bottom">
           <div class="left">
-            <span class="choice">
-              <van-checkbox :value="true" checked-color="#ee0a24">{{index===0?'默认':'选择'}}</van-checkbox>
+            <span class="choice" @click="setDefaultAddress(address.address_id)">
+              <van-checkbox :value="address.address_id===defaultAddressId" checked-color="#ee0a24">{{address.address_id===defaultAddressId?'默认':'选择'}}</van-checkbox>
             </span>
           </div>
           <div class="right">
-            <span class="edit">
+            <span class="edit" @click="editAddress(address.address_id)">
               <van-icon name="edit" />
               编辑
             </span>
@@ -43,12 +40,13 @@
         您的地址栏是空的, 快去添加吧
       </div>
     </div>
-    <div class="addBtn" @click="$router.push('/')">添加地址</div>
+    <div class="addBtn" @click="$router.push('/create')">添加地址</div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { getDefaultAddressId } from '@/api/address'
 export default {
   name: 'AddressIndex',
   data () {
@@ -57,16 +55,41 @@ export default {
     }
   },
   computed: {
-    ...mapState('address', ['addressList'])
+    ...mapState('address', ['addressList', 'defaultAddressId'])
   },
   methods: {
     delAddress (id) {
       this.$store.dispatch('address/delAddressAction', id)
+    },
+    editAddress (id) {
+      // 先跳转到create页面
+      // 获取当前id地址数据
+      const address = this.addressList.find(item => item.address_id === id)
+      this.$router.replace({
+        path: '/create',
+        query: {
+          mode: 'edit',
+          address_id: id,
+          name: address.name,
+          phone: address.phone,
+          detail: address.detail
+        }
+      })
+    },
+    setDefaultAddress (id) {
+      this.$store.dispatch('address/setDefaultAddressAction', id)
+      this.$router.go(-1)
+    },
+    async getDefaultAddressId () {
+      await getDefaultAddressId()
+    },
+    getAddressList () {
+      this.$store.dispatch('address/getAddressAction')
     }
   },
   created () {
     if (this.isLogin) {
-      this.$store.dispatch('address/getAddressAction')
+      this.getAddressList()
     }
   }
 }

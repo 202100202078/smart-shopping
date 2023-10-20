@@ -95,25 +95,24 @@
 </template>
 
 <script>
-import { getAddressList } from '@/api/address'
+// import { getAddressList } from '@/api/address'
 import { checkOrder, submitOrder } from '@/api/order'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'PayIndex',
   data () {
     return {
-      addressList: [],
       order: {},
       personal: {},
       remark: ''
     }
   },
   computed: {
-    selectedAddress () {
-      return this.addressList[0]
-    },
+    ...mapState('address', ['addressList']),
+    ...mapGetters('address', ['selectedAddress']),
     addressDetail () {
-      const region = this.selectedAddress.region
-      return region.province + region.city + region.region + this.selectedAddress.detail
+      // const region = this.selectedAddress.region
+      return this.selectedAddress.detail
     },
     mode () {
       return this.$route.query.mode
@@ -149,12 +148,10 @@ export default {
       this.$toast.success('支付成功')
       this.$router.replace('/myorder')
     },
-    async getAddressList () {
-      const { data: { list } } = await getAddressList()
-      this.addressList = list
-      // 将数据存储至vuex中
-      this.$store.commit('address/setAddressList', list)
-    },
+    // async getAddressList () {
+    //   const { data: { list } } = await getAddressList()
+    //   this.addressList = list
+    // },
     async getOrderList () {
       if (this.mode === 'cart') {
         const { data: { order, personal } } = await checkOrder(this.mode, {
@@ -174,7 +171,7 @@ export default {
     }
   },
   created () {
-    this.getAddressList()
+    // this.getAddressList()
     this.getOrderList()
   }
 }

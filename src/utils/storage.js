@@ -2,6 +2,7 @@
 const INFO_KEY = 'my_shopping_info'
 const HISTORY_KEY = 'my_history_info'
 const ADDRESS_KEY = 'my_address_info'
+const DEFAULT_ADDRESS_KEY = 'my_default_address_info'
 
 export const getUserInfo = () => {
   const defaultInfo = { token: '', userId: '' }
@@ -37,4 +38,13 @@ export const getAddress = () => {
 
 export const setAddress = (address) => {
   localStorage.setItem(ADDRESS_KEY, JSON.stringify(address))
+}
+
+export const getDefaultAddressId = () => {
+  const result = localStorage.getItem(DEFAULT_ADDRESS_KEY)
+  return result ? JSON.parse(result) : ''
+}
+
+export const setDefaultAddressId = (id) => {
+  localStorage.setItem(DEFAULT_ADDRESS_KEY, JSON.stringify(id))
 }
